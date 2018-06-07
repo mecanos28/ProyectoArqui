@@ -2,8 +2,7 @@ package Controller;
 
 import Logic.DualCore;
 import Logic.SimpleCore;
-import Storage.Context;
-import Storage.MainMemory;
+import Storage.*;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -86,5 +85,36 @@ public class Simulation {
     }
 
     public void unlockDataCacheBlock(boolean isSimpleCore, int blockLabel){
+    }
+
+    public DataBlock getDataBlockFromOtherCache(boolean isSimpleCore, int blockLabel){
+        if (isSimpleCore){
+            return this.dualCore.getDataCache().getBlock(blockLabel);
+        }
+        else {
+            return this.simpleCore.getDataCache().getBlock(blockLabel);
+        }
+    }
+
+    public boolean checkDataBlockOnOtherCache(boolean isSimpleCore, int blockLabel){
+        if (isSimpleCore){
+            return this.dualCore.getDataCache().hasBlock(blockLabel);
+        }
+        else {
+            return this.simpleCore.getDataCache().hasBlock(blockLabel);
+        }
+    }
+
+    public void changeDataBlockStatusFromOtherCache(boolean isSimpleCore, int blockLabel, CacheStatus status){
+        if (isSimpleCore){
+            this.dualCore.getDataCache().getBlock(blockLabel).setBlockStatus(status);
+        }
+        else {
+            this.simpleCore.getDataCache().getBlock(blockLabel).setBlockStatus(status);
+        }
+    }
+
+    public void saveDataBlockToMainMemory(DataBlock block, int label){
+        this.mainMemory.setDataBlock(block, label);
     }
 }

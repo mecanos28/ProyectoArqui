@@ -1,10 +1,7 @@
 package Logic;
 
 import Controller.Simulation;
-import Storage.CacheStatus;
-import Storage.Context;
-import Storage.DataCache;
-import Storage.InstructionCache;
+import Storage.*;
 
 public class Core {
 
@@ -63,12 +60,30 @@ public class Core {
             if (this.dataCache.hasBlock(blockLabel)){
                 CacheStatus blockStatus = this.dataCache.getBlock(blockLabel).getBlockStatus();
                 if (blockStatus == CacheStatus.Modified || blockStatus == CacheStatus.Shared){
+                    this.dataCache.getBlock(blockLabel).getLock().unlock();
                     context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData());
+                    //TODO: Change cycle.
                 }
                 else {
                     if (this.simulation.getDataBus().tryLock()) {
                         if (this.simulation.tryLockDataCacheBlock(this.isSimpleCore, blockLabel)){
-
+                            if (this.simulation.checkDataBlockOnOtherCache(this.isSimpleCore, blockLabel)){
+                                DataBlock blockFromOtherCache = this.simulation.getDataBlockFromOtherCache(this.isSimpleCore, blockLabel);
+                                if (blockFromOtherCache.getBlockStatus() == CacheStatus.Modified){
+                                    //TODO: Copy to cache
+                                    this.simulation.saveDataBlockToMainMemory(blockFromOtherCache, blockLabel);
+                                    this.simulation.changeDataBlockStatusFromOtherCache(this.isSimpleCore, blockLabel, CacheStatus.Shared);
+                                    this.simulation.unlockDataCacheBlock(this.isSimpleCore, blockLabel);
+                                }
+                                else {
+                                    this.simulation.unlockDataCacheBlock(this.isSimpleCore, blockLabel);
+                                    //TODO: Copy from memory
+                                }
+                            }
+                            else {
+                                this.simulation.unlockDataCacheBlock(this.isSimpleCore, blockLabel);
+                                //TODO: Copy from memory
+                            }
                         }
                         else {
                             //TODO: Release everything
@@ -77,13 +92,56 @@ public class Core {
                     else {
                         //TODO: Release everything
                     }
+                    this.dataCache.getBlock(blockLabel).getLock().unlock();
+                    context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData());
+                    //TODO: Change cycle.
                 }
             }
             else {
-
+                if (this.simulation.getDataBus().tryLock()) {
+                    if (this.dataCache.getBlock(blockLabel).getBlockStatus() == CacheStatus.Modified){
+                        this.simulation.saveDataBlockToMainMemory(this.dataCache.getBlock(blockLabel), blockLabel);
+                        //TODO: 40 cycles
+                    }
+                    if (this.simulation.tryLockDataCacheBlock(this.isSimpleCore, blockLabel)){
+                        if (this.simulation.checkDataBlockOnOtherCache(this.isSimpleCore, blockLabel)){
+                            DataBlock blockFromOtherCache = this.simulation.getDataBlockFromOtherCache(this.isSimpleCore, blockLabel);
+                            if (blockFromOtherCache.getBlockStatus() == CacheStatus.Shared){
+                                this.simulation.unlockDataCacheBlock(this.isSimpleCore, blockLabel);
+                                //TODO: Copy from memory
+                            }
+                            else if (blockFromOtherCache.getBlockStatus() == CacheStatus.Modified){
+                                //TODO: Copy to cache
+                                this.simulation.saveDataBlockToMainMemory(blockFromOtherCache, blockLabel);
+                                this.simulation.changeDataBlockStatusFromOtherCache(this.isSimpleCore, blockLabel, CacheStatus.Shared);
+                                this.simulation.unlockDataCacheBlock(this.isSimpleCore, blockLabel);
+                            }
+                            else {
+                                this.simulation.unlockDataCacheBlock(this.isSimpleCore, blockLabel);
+                                //TODO: Copy from memory
+                            }
+                        }
+                        else {
+                            this.simulation.unlockDataCacheBlock(this.isSimpleCore, blockLabel);
+                            //TODO: Copy from memory
+                        }
+                    }
+                    else {
+                        this.simulation.getDataBus().unlock();
+                        this.dataCache.getBlock(blockLabel).getLock().unlock();
+                        //TODO: Release everything
+                    }
+                }
+                else {
+                    this.dataCache.getBlock(blockLabel).getLock().unlock();
+                    //TODO: Cycle and start over
+                }
+                this.dataCache.getBlock(blockLabel).getLock().unlock();
+                context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData());
+                //TODO: Cycle
             }
         } else {
-            //TODO: Release everything
+            //TODO: Cycle and start over
         }
     }
 

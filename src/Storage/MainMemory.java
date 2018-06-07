@@ -24,4 +24,12 @@ public class MainMemory {
         return 1;
     }
 
+    public void setDataBlock(DataBlock block, int i){
+        dataBlocks[i] = block;
+    }
+
+    public void setInstructionBlock(InstructionBlock block, int i){
+        instructionBlocks[i - 24] = block;
+    }
+
 }
