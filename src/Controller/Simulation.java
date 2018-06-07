@@ -1,8 +1,11 @@
 package Controller;
 
+import Logic.DualCore;
+import Logic.SimpleCore;
 import Storage.Context;
 import Storage.MainMemory;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.locks.ReentrantLock;
@@ -17,6 +20,9 @@ public class Simulation {
     private ReentrantLock instructionsBus;
     private MainMemory mainMemory;
 
+    private DualCore dualCore;
+    private SimpleCore simpleCore;
+
     private int clock;
 
     public Simulation(){
@@ -24,10 +30,12 @@ public class Simulation {
         this.mainMemory = new MainMemory();
         this.dataBus = new ReentrantLock();
         this.instructionsBus = new ReentrantLock();
+        this.threadQueue = new ArrayDeque<>();
     }
 
     public void start(){
-
+        this.dualCore = new DualCore(this);
+        this.simpleCore = new SimpleCore(this);
     }
 
     public CyclicBarrier getBarrier() {
@@ -64,5 +72,19 @@ public class Simulation {
 
     public void setInstructionsBus(ReentrantLock instructionsBus) {
         this.instructionsBus = instructionsBus;
+    }
+
+    public boolean tryLockInstructionsCacheBlock(){
+        return true;
+    }
+
+    public void unlockInstructionsCacheBlock(){
+    }
+
+    public boolean tryLockDataCacheBlock(boolean isSimpleCore, int blockLabel){
+        return true;
+    }
+
+    public void unlockDataCacheBlock(boolean isSimpleCore, int blockLabel){
     }
 }

@@ -11,15 +11,18 @@ public class Core {
     private DataCache dataCache;
     private InstructionCache instructionCache;
 
+    private boolean isSimpleCore;
+
     private Simulation simulation;
 
     private int clock;
 
-    public Core (Simulation simulation, int numberOfBlocks) {
+    public Core (Simulation simulation, int numberOfBlocks, boolean isSimpleCore) {
         this.simulation = simulation;
         this.dataCache = new DataCache(numberOfBlocks);
         this.instructionCache = new InstructionCache(numberOfBlocks);
         this.clock = 0;
+        this.isSimpleCore = isSimpleCore;
     }
 
     public DataCache getDataCache() {
@@ -64,7 +67,12 @@ public class Core {
                 }
                 else {
                     if (this.simulation.getDataBus().tryLock()) {
+                        if (this.simulation.tryLockDataCacheBlock(this.isSimpleCore, blockLabel)){
 
+                        }
+                        else {
+                            //TODO: Release everything
+                        }
                     }
                     else {
                         //TODO: Release everything

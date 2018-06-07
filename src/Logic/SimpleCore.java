@@ -8,7 +8,7 @@ public class SimpleCore extends Core {
     private Context currentThread;
 
     public SimpleCore(Simulation simulation){
-        super(simulation, 4);
+        super(simulation, 4, true);
         this.currentThread = super.getSimulation().getNextContext();
     }
 

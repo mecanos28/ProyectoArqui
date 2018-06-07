@@ -9,7 +9,7 @@ public class DualCore extends Core {
     private Context newThread;
 
     public DualCore(Simulation simulation){
-        super(simulation, 8);
+        super(simulation, 8, false);
         this.oldThread = super.getSimulation().getNextContext();
     }
 
