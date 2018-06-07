@@ -12,4 +12,9 @@ public class MainMemory {
         return blocks[i];
     }
 
+    public int getBlockLabelByAddress(int address){
+        //TODO: Calculate block label by address.
+        return 1;
+    }
+
 }
