@@ -2,13 +2,13 @@ package Storage;
 
 public class InstructionCache {
 
-    private Block[] blocks;
+    private InstructionBlock[] blocks;
 
     public InstructionCache (int numberOfBlocks) {
-        this.blocks = new Block[numberOfBlocks];
+        this.blocks = new InstructionBlock[numberOfBlocks];
     }
 
-    public Block getBlock(int i) {
+    public InstructionBlock getBlock(int i) {
         return blocks[i];
     }
 
