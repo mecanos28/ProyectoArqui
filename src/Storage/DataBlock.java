@@ -1,4 +1,4 @@
-package Data;
+package Storage;
 
 public class DataBlock {
 

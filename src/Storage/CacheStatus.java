@@ -1,4 +1,4 @@
-package Data;
+package Storage;
 
 public enum CacheStatus {
     Shared,
