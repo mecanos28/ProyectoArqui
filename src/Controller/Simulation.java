@@ -117,4 +117,13 @@ public class Simulation {
     public void saveDataBlockToMainMemory(DataBlock block, int label){
         this.mainMemory.setDataBlock(block, label);
     }
+
+    public void invalidateBlockOnOtherCache(boolean isSimpleCore, int blockLabel){
+        if (isSimpleCore){
+            this.dualCore.getDataCache().getBlock(blockLabel).setBlockStatus(CacheStatus.Invalid);
+        }
+        else {
+            this.simpleCore.getDataCache().getBlock(blockLabel).setBlockStatus(CacheStatus.Invalid);
+        }
+    }
 }
