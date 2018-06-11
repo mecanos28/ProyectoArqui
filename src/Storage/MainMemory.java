@@ -24,6 +24,11 @@ public class MainMemory {
         return 1;
     }
 
+    public int getBlockWordByAddress(int address){
+        //TODO: Calculate block label by address.
+        return 1;
+    }
+
     public void setDataBlock(DataBlock block, int i){
         dataBlocks[i] = block;
     }

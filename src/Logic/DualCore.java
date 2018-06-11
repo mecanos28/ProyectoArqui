@@ -67,12 +67,13 @@ public class DualCore extends Core {
 
     public void manageLoadWord(Context context, int destinyRegister, int sourceRegister, int immediate){
         int blockLabel = this.simulation.getMainMemory().getBlockLabelByAddress(context.getRegister(sourceRegister) + immediate);
+        int blockWord = this.simulation.getMainMemory().getBlockWordByAddress(context.getRegister(sourceRegister) + immediate);
         if (this.dataCache.getBlock(blockLabel).getLock().tryLock()){
             if (this.dataCache.hasBlock(blockLabel)){
                 CacheStatus blockStatus = this.dataCache.getBlock(blockLabel).getBlockStatus();
                 if (blockStatus == CacheStatus.Modified || blockStatus == CacheStatus.Shared){
                     this.dataCache.getBlock(blockLabel).getLock().unlock();
-                    context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData());
+                    context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData(blockWord));
                     super.nextCycle();
                 }
                 else {
@@ -109,7 +110,7 @@ public class DualCore extends Core {
                         //TODO: start over
                     }
                     this.dataCache.getBlock(blockLabel).getLock().unlock();
-                    context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData());
+                    context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData(blockWord));
                     this.nextCycle();
                 }
             }
@@ -155,7 +156,7 @@ public class DualCore extends Core {
                     //TODO: start over
                 }
                 this.dataCache.getBlock(blockLabel).getLock().unlock();
-                context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData());
+                context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData(blockWord));
                 this.nextCycle();
             }
         } else {
@@ -166,6 +167,7 @@ public class DualCore extends Core {
 
     public void manageStoreWord(Context context, int destinyRegister, int sourceRegister, int immediate){
         int blockLabel = this.simulation.getMainMemory().getBlockLabelByAddress(context.getRegister(sourceRegister) + immediate);
+        int blockWord = this.simulation.getMainMemory().getBlockWordByAddress(context.getRegister(sourceRegister) + immediate);
         if (this.dataCache.getBlock(blockLabel).getLock().tryLock()){
             if (this.dataCache.hasBlock(blockLabel)){
                 CacheStatus blockStatus = this.dataCache.getBlock(blockLabel).getBlockStatus();
@@ -187,12 +189,12 @@ public class DualCore extends Core {
                         this.nextCycle();
                         //TODO: Start again
                     }
-                    this.dataCache.getBlock(blockLabel).setData(context.getRegister(destinyRegister));
+                    this.dataCache.getBlock(blockLabel).setData(blockWord, context.getRegister(destinyRegister));
                     this.dataCache.getBlock(blockLabel).setBlockStatus(CacheStatus.Modified);
                     this.nextCycle();
                 }
                 else if (blockStatus == CacheStatus.Modified){
-                    this.dataCache.getBlock(blockLabel).setData(context.getRegister(destinyRegister));
+                    this.dataCache.getBlock(blockLabel).setData(blockWord, context.getRegister(destinyRegister));
                     this.nextCycle();
                 }
                 else {
@@ -227,7 +229,7 @@ public class DualCore extends Core {
                             this.nextCycle();
                             //TODO: start over
                         }
-                        this.dataCache.getBlock(blockLabel).setData(context.getRegister(destinyRegister));
+                        this.dataCache.getBlock(blockLabel).setData(blockWord, context.getRegister(destinyRegister));
                         this.dataCache.getBlock(blockLabel).setBlockStatus(CacheStatus.Modified);
                         this.nextCycle();
                     }
@@ -237,7 +239,7 @@ public class DualCore extends Core {
                         //TODO: start over
                     }
                     this.dataCache.getBlock(blockLabel).getLock().unlock();
-                    context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData());
+                    context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData(blockWord));
                     this.nextCycle();
                 }
             }
@@ -284,7 +286,7 @@ public class DualCore extends Core {
                     //TODO: start over
                 }
                 this.dataCache.getBlock(blockLabel).getLock().unlock();
-                context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData());
+                context.setRegister(destinyRegister, this.dataCache.getBlock(blockLabel).getData(blockWord));
                 this.nextCycle();
             }
         } else {
