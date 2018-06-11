@@ -2,12 +2,12 @@ package Storage;
 
 public class DataBlock extends Block {
 
-    private int data;
+    private int[] data;
     private CacheStatus blockStatus;
 
     public DataBlock() {
         this.blockStatus = CacheStatus.Invalid;
-        this.data = 0;
+        this.data = new int[4];
     }
 
     public CacheStatus getBlockStatus() {
@@ -18,12 +18,12 @@ public class DataBlock extends Block {
         this.blockStatus = blockStatus;
     }
 
-    public int getData (){
-        return this.data;
+    public int getData (int i){
+        return this.data[i];
     }
 
-    public void setData (int value){
-        this.data = value;
+    public void setData (int i, int value){
+        this.data[i] = value;
     }
 
 }

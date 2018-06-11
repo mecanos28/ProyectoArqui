@@ -1,4 +1,4 @@
-package Logic;
+package Storage;
 
 public class Instruction {
     private int operationCode;
@@ -11,6 +11,9 @@ public class Instruction {
         this.sourceRegister = sourceRegister;
         this.destinyRegister = destinyRegister;
         this.immediate = immediate;
+    }
+
+    public Instruction() {
     }
 
     public int getOperationCode() {

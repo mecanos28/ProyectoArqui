@@ -2,17 +2,17 @@ package Storage;
 
 public class InstructionBlock extends Block {
 
-    private int[] values;
+    private Instruction[] values;
 
     public InstructionBlock() {
-        this.values = new int[4];
+        this.values = new Instruction[4];
     }
 
-    public int getValue (int i){
+    public Instruction getValue (int i){
         return this.values[i];
     }
 
-    public void setValue (int i, int value){
+    public void setValue (int i, Instruction value){
         this.values[i] = value;
     }
 
